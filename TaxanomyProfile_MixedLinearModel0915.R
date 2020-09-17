@@ -1,18 +1,18 @@
 #Farnaz Fouladi
-#04-10-2020
-#Comparison of taxanomic compositions between non-AN, AN T1, and AN T2 using mixed linear model.
+#09-15-2020
+#Comparison of taxonomic compositions between non-AN, AN T1, and AN T2 using 
+#mixed linear model. taxa ~ group + week
 
 rm(list=ls())
 
 library(nlme)
 
-output<-"/Users/farnazfouladi/Google Drive/AnorexiaPaper11-11-19/paper/output/"
-input<-"/Users/farnazfouladi/Google Drive/AnorexiaPaper11-11-19/paper/input/"
+output<-"./output/"
+input<-"./input/"
 taxaNames<-c("Phylum","Class","Order","Family","Genus","SV")
 
 for (t in taxaNames){
   
-  setwd(paste0(output,t))
   pval_groupT1HC<-vector()
   pval_groupT2HC<-vector()
   pval_groupT1T2<-vector()
@@ -25,14 +25,14 @@ for (t in taxaNames){
   myT1<-myT[myT$Sample.type=="Mouse.feces",]
 
   
-  for (i in c(1:finishAbundanceIndex)){
+  for (i in 1:finishAbundanceIndex){
     
     bug<-myT1[,i]
     
     if (mean(bug>0)>0.1){
       
       myData<-data.frame(bug,Group= myT1$Group,Donor=myT1$Donor,Week=myT1$Week)
-      myData$Group<-relevel(myData$Group, ref="HC")
+      myData$Group<-relevel(factor(myData$Group), ref="HC")
       fit1<-summary(lme(bug~Group+Week,random = ~1 | Donor,data = myData ))
       
       pval_groupT1HC[index]<-fit1$tTable[2,5]
@@ -54,7 +54,6 @@ for (t in taxaNames){
   df$Adjustedpval_groupT1HC<-p.adjust(df$pval_groupT1HC, method = "BH")
   df$Adjustedpval_groupT2HC<-p.adjust(df$pval_groupT2HC, method = "BH")
   df$Adjustedpval_groupT1T2<-p.adjust(df$pval_groupT1T2, method = "BH")
-  df$time<-p.adjust(df$time, method = "BH")
-  write.table(df,paste0(t,paste0("_Group_Comparison_MixedLinearModel.txt")),sep="\t",row.names = FALSE)
+  df$Adjustedtime<-p.adjust(df$time, method = "BH")
+  write.table(df,paste0(output,t,"/",t,paste0("_Group_Comparison_MixedLinearModel.txt")),sep="\t",row.names = FALSE)
 }
-

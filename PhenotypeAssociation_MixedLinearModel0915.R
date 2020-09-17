@@ -1,17 +1,18 @@
 #Farnaz Fouladi
-#04-10-2020
+#09-15-2020
 #Association between phenotypes and taxa using mixed linear model
 #Model: taxa ~ Group*Phenotype+Week,  random = ~1 | Donor
 
 rm(list=ls())
-output<-"/Users/farnazfouladi/Google Drive/AnorexiaPaper11-11-19/paper/output/"
-input<-"/Users/farnazfouladi/Google Drive/AnorexiaPaper11-11-19/paper/input/"
-taxaNames<-c("Phylum","Class","Order","Family","Genus")
+
 library(nlme)
+
+output<-"./output/"
+input<-"./input/"
+taxaNames<-c("Phylum","Class","Order","Family","Genus")
 
 for (t in taxaNames){
   
-  setwd(paste0(output,t))
   pval_mixedModel_phenotype<-vector()
   pval_mixedModel_group<-vector()
   pval_mixedModel_time<-vector()
@@ -90,7 +91,7 @@ for (t in taxaNames){
   df$Adjustedpval_mixedModel_time<-p.adjust(df$pval_mixedModel_time, method = "BH")
   df$Adjustedpval_mixedModel_groupT1_HC<-p.adjust(df$pval_mixedModel_groupT1_HC, method = "BH")
   df$Adjustedpval_mixedModel_groupT2_HC<-p.adjust(df$pval_mixedModel_groupT2_HC, method = "BH")
-  write.table(df,paste0(t,"_GroupPhenotypeTimeModel_MixedLinearModel.txt"),sep="\t",row.names = FALSE)
+  write.table(df,paste0(output,t,"/",t,"_GroupPhenotypeTimeModel_MixedLinearModel.txt"),sep="\t",row.names = FALSE)
 }
 
 
@@ -108,7 +109,7 @@ theme_set(theme_classic(base_size = 11))
 col<-c("blue","darkorange2","forestgreen")
 getplot<-function(data,taxa,phenotype,nameOfPhenotype){
   
-  ggplot(data=data,aes(x=data[,phenotype],y=data[,taxa]))+geom_point(aes(color=Group))+
+  ggplot(data=data,aes(x=data[,phenotype],y=data[,taxa]))+geom_point(aes(color=Group),size=0.8)+
     scale_color_manual(values = col)+theme(legend.position = "none")+
     labs(y=expression(log[10]~"normalized count"),x=nameOfPhenotype,title=taxa)
 
@@ -129,7 +130,8 @@ plot11<-getplot(myT1,"Peptostreptococcaceae","Fat.mass.pct.change","Change in Fa
 plot12<-getplot(myT1,"Rikenellaceae","Fat.mass.pct.change","Change in Fat mass")+labs(subtitle="Group p=0.96\nPhenotype p=0.043\nInteraction p=0.36\nTime=0.84")
 
 setwd(paste0(output,"Figures"))
-png("PhenotypComparison.png",units="in", width=10, height=10,res=300)
+#png("PhenotypComparison.png",units="in", width=10, height=10,res=300)
+pdf("PhenotypComparison.pdf",height=8,width = 10)
 plot_grid(plot1,plot2,plot3,
           plot4,plot5,plot6,
           plot7,plot8,plot9,plot10,plot11,plot12,ncol=4,nrow=3,scale = 0.8)
@@ -146,7 +148,7 @@ getplotWithLegend<-function(data,taxa,phenotype,nameOfPhenotype){
 names<-c("non-AN","AN T1","AN T2")
 myPlot<-getplotWithLegend(myT1,"Rikenellaceae","Cecum.wt","Cecum weight")+labs(subtitle="Group p=0.55\nPhenotype p<0.001\nInteraction p<0.001",
                                                                               col="Groups")
-png("legend.png", units="in", width=8, height=8,res=300)
+pdf("legend.pdf")
 legendp <- cowplot::get_legend(myPlot)
 grid.newpage()
 grid.draw(legendp)
