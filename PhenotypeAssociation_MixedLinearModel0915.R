@@ -5,7 +5,12 @@
 
 rm(list=ls())
 
+#libraries
 library(nlme)
+library(ggplot2)
+library(ggsignif)
+library(cowplot)
+library(grid)
 
 output<-"./output/"
 input<-"./input/"
@@ -101,10 +106,6 @@ myT<-read.table(paste0(input,t,"_norm_table.txt"), header=TRUE, sep="\t")
 myT1<-myT[myT$Sample.type=="Mouse.feces",]
 myT2<-myT1[myT1$Week==4,]
 
-library(ggplot2)
-library(ggsignif)
-library(cowplot)
-library(grid)
 theme_set(theme_classic(base_size = 11))
 col<-c("blue","darkorange2","forestgreen")
 getplot<-function(data,taxa,phenotype,nameOfPhenotype){
@@ -130,7 +131,6 @@ plot11<-getplot(myT1,"Peptostreptococcaceae","Fat.mass.pct.change","Change in Fa
 plot12<-getplot(myT1,"Rikenellaceae","Fat.mass.pct.change","Change in Fat mass")+labs(subtitle="Group p=0.96\nPhenotype p=0.043\nInteraction p=0.36\nTime=0.84")
 
 setwd(paste0(output,"Figures"))
-#png("PhenotypComparison.png",units="in", width=10, height=10,res=300)
 pdf("PhenotypComparison.pdf",height=8,width = 10)
 plot_grid(plot1,plot2,plot3,
           plot4,plot5,plot6,

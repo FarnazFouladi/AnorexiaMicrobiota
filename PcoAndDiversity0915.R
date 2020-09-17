@@ -142,7 +142,7 @@ betweenT2HCdistance<-rowMeans(HCT2)
 betweenT1T2distance<-colMeans(T1T2)
 betweenT2T1distance<-rowMeans(T1T2)
 
-#Get the id 
+#Get the ids 
 myT2_week4_HC<-myT2_week4[myT2_week4$Group=="HC",] #sum(colnames(HC)==as.character(myT2_week4_HC$Sample)) 50
 myT2_week4_T1<-myT2_week4[myT2_week4$Group=="T1",] #50
 myT2_week4_T2<-myT2_week4[myT2_week4$Group=="T2",] #53
@@ -168,6 +168,8 @@ ID<-c(myT2_week4_HC$Donor,myT2_week4_T1$Donor,
 df<-data.frame(d,Group,distance,ID) 
 df$Group<-factor(df$Group,levels = c("non-AN vs. AN T1","non-AN vs. AN T2","AN T1 vs. AN T2",
                                      "non-AN vs. non-AN","AN T1 vs. AN T1","AN T2 vs. AN T2"))
+
+#Plots for average Bray-Curtis Distances
 theme_set(theme_classic(base_size = 16))
 pdf(paste0(output,"Figures/BrayCurtisDistances.pdf"),width=7,height=4)
 plot<-ggplot(data=df,aes(x=factor(distance),y=d))+geom_boxplot(aes(col=factor(Group)),outlier.shape = NA)+

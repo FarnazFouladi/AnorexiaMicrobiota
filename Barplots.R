@@ -1,6 +1,6 @@
 #Farnaz Fouladi
 #04-10-2020 
-#This R code generates taxonomy bar plots
+#This R code generates taxonomic bar plots
 
 rm(list=ls())
 
@@ -83,12 +83,14 @@ for (t in taxaNames){
   }
 }
 
+#Bar plots for all taxonomic levels
 pdf(paste0(output,"Figures/Taxanomy.pdf"),height = 9)
 plot_grid(myList[[1]],myList[[2]],nrow = 2,ncol=1)
 plot_grid(myList[[3]],myList[[4]],nrow = 2,ncol=1)
 dev.off()
 
-png("FamilyBarPlot.png",units="in", width=6, height=6,res=300)
+#Bar plot for family
+png(paste0(output,"FamilyBarPlot.png"),units="in", width=6, height=6,res=300)
 myList[[4]]
 dev.off()
 
