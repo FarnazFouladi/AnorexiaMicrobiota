@@ -28,25 +28,47 @@ myTM$DailyFood<-myTM$Cum.food.consumption/28
 ########Comparison of phenotypes between groups
 #Model: phenotype ~ group + week
 
-anova(lme(Body.wt.pct.change~Group+Week, random = ~1 | Donor,data=myTM,na.action = na.omit))
+weightVariables<-c("Body.wt.pct.change","Fat.mass.pct.change",
+                   "Lean.mass.pct.change","DailyFood")
+
+weightPvals<-vector()
+index<-1
+for (v in weightVariables){
+  variable = myTM[,v]
+  group = myTM[,"Group"]
+  data<-data.frame(variable,group,Donor = myTM[,"Donor"],week=myTM[,"Week"])
+  fit<-anova(lme(variable~group+week, random = ~1 | Donor,data,na.action = na.omit))
+  weightPvals[index]<-fit$`p-value`[2]
+  index<-index+1
+}
+p.adjust(weightPvals,method = "BH")
+#pairwise comparison between groups for body percent weight
 summary(lme(Body.wt.pct.change~Group+Week, random = ~1 | Donor,data=myTM,na.action = na.omit))
 p.adjust(c(0.1618,0.3635,0.0338),method = "BH") #0.2427 0.3635 0.1014
-anova(lme(Fat.mass.pct.change~Group+Week, random = ~1 | Donor,data=myTM,na.action = na.omit))
-anova(lme(Lean.mass.pct.change~Group+Week, random = ~1 | Donor,data=myTM,na.action = na.omit))
-anova(lme(DailyFood~Group+Week, random = ~1 | Donor,data=myTM,na.action = na.omit))
 
 
 ########Comparison of Cecum weight, small intestine and gonadal fat at week 4
 #Model: phenotype ~ group 
 
 myTM_4<-myTM[myTM$Week==4,]
-anova(lme(Cecum.wt~Group, random = ~1 | Donor, data=myTM_4,na.action = na.omit))
+
+intestineVariables<-c("Cecum.wt","Rel.cecum.wt","SI.wt","Rel.SI.wt","Gonadal.fat.wt")
+intestinePvals<-vector()
+index<-1
+for (v in intestineVariables){
+  variable = myTM_4[,v]
+  group = myTM_4[,"Group"]
+  data<-data.frame(variable,group,Donor = myTM_4[,"Donor"])
+  fit<-anova(lme(variable~group, random = ~1 | Donor,data,na.action = na.omit))
+  intestinePvals[index]<-fit$`p-value`[2]
+  index<-index+1
+}
+p.adjust(intestinePvals,method = "BH")
+#pairwise comparison between groups for body percent weight
 summary(lme(Cecum.wt~Group, random = ~1 | Donor, data=myTM_4,na.action = na.omit))
 #pvalue<-c("HC-T1","HC-T2","T1-T2")
 pval<-c(0.0570,0.0478,0.9219)
 adjustpval<-p.adjust(pval,method = "BH") #0.0855 0.0855 0.9219
-anova(lme(SI.wt~Group, random = ~1 | Donor, data=myTM_4,na.action = na.omit))
-anova(lme(Gonadal.fat.wt~Group, random = ~1 | Donor, data=myTM_4,na.action = na.omit))
 
 
 ########Principal coordinate analysis
